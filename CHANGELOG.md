@@ -4,8 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-11-25
+
+Minor release: accurate model data and recovery when a key is missing or late.
+
 ### Fixed
 
+- **Model limits no longer fall to 200K/32K/$0 for a new model.** The
+  published tables were a catalog generation behind: 13 ids the live catalog
+  returns had no entry (the gemini-4 family, muse-wonder, claude-haiku-5-5,
+  claude-fable-5-2, kimi, glm and deepseek-v41), so they got defaults and a
+  silent $0 cost. All are covered now, with `OVERRIDES` for the four whose
+  ids don't match the docs names. A fixture test fails on any uncovered
+  catalog id.
+- **Context comes from the model's own `context` preset**, not just the
+  published default: the default variant's value when marked, else the
+  smallest. The docs table is the fallback for models without one.
 - **v2: the context gauge no longer reads past 100%, and turns no longer trip
   compaction mid-conversation.** Two separate causes. Replayed turns were
   summed into the visible turn's token counts, and opencode reads those as
